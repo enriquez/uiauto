@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'uiauto/cli'
+UIAuto::CLI.start
