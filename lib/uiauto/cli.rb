@@ -43,6 +43,7 @@ module UIAuto
     method_option :results, :default => File.expand_path("./uiauto/results")
     method_option :trace,   :default => File.expand_path("./uiauto/results/trace")
     method_option :app
+    method_option :device
     def exec(file_or_dir = "./uiauto/scripts/")
       Runner.run(file_or_dir, options)
     end

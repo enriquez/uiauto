@@ -4,12 +4,13 @@ require 'cfpropertylist'
 
 module UIAuto
   class Instruments
-    attr_accessor :trace, :app, :results, :script
+    attr_accessor :trace, :app, :results, :script, :device
 
     def initialize(script, opts = {})
       @script  = script
       @trace   = opts[:trace]
       @results = opts[:results]
+      @device  = opts[:device]
       @app     = opts[:app] || default_application
 
       FileUtils.mkdir_p(@results) unless File.exists?(@results)
@@ -17,6 +18,7 @@ module UIAuto
 
     def command
       command = ["xcrun instruments"]
+      command << "-w #{device_id}" if device_id
       command << "-D #{@trace}"
       command << "-t #{automation_template_location}"
       command << @app
@@ -67,9 +69,9 @@ module UIAuto
         end
       end
 
-      # TODO: Add support for running on a device
       sorted_matches = matching_directories.sort_by { |dir| File.mtime(dir) }
-      Dir.glob(File.join(sorted_matches.last, "Build/Products/*-iphonesimulator/*.app")).sort_by { |dir| File.mtime(dir) }.last
+      build_products_directory = device_id ? "Build/Products/*-iphoneos/*.app" : "Build/Products/*-iphonesimulator/*.app"
+      Dir.glob(File.join(sorted_matches.last, build_products_directory)).sort_by { |dir| File.mtime(dir) }.last
     end
 
     def automation_template_location
@@ -85,6 +87,17 @@ module UIAuto
     def derived_data_location
       # TODO: Parse ~/Library/Preferences/com.apple.dt.Xcode.plist to find customized location
       File.expand_path("~/Library/Developer/Xcode/DerivedData/")
+    end
+
+    def device_id
+      @device_id ||= begin
+        if @device == 'device'
+          ioreg = `ioreg -w 0 -rc IOUSBDevice -k SupportsIPhoneOS`
+          ioreg[/"USB Serial Number" = "([0-9a-z]+)"/] && $1
+        else
+          @device
+        end
+      end
     end
 
   end

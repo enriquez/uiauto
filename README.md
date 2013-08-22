@@ -4,8 +4,6 @@ UIAuto is a command line tool for running UI Automation scripts. It improves App
 
 UIAuto also facilitates the setup of simulator data for running scripts in a repeatable and known state.
 
-Note: UIAuto only works with the simulator for now.
-
 ## Prerequisites
 
 * Xcode command line tools
@@ -24,7 +22,7 @@ UIAuto does not build your app. You can use Xcode or `xcodebuild`.
 
 #### With Xcode
 
-The easiest way to build your app for UIAuto is to use Xcode. Open your app in Xcode, select the simulator, then build your project (command+b). This builds your app and places the resulting bundle in derived data.
+The easiest way to build your app for UIAuto is to use Xcode. Open your app in Xcode then build your project (command+b). This builds your app and places the resulting bundle in derived data.
 
 #### With xcodebuild
 
@@ -36,7 +34,7 @@ You can build from the command line using `xcodebuild`. The following examples s
     # Example using xcodebuild to build a project
     $ xcodebuild -project MyApp.xcodeproj -sdk iphonesimulator6.1
 
-By building with the commands above, the resulting bundle is placed in derived data.
+By building with the commands above, the resulting bundle is placed in derived data. Replace `iphonesimulator6.1` with `iphoneos6.1` if you want to build for the device.
 
 ### Run UI Automation scripts
 
@@ -64,9 +62,19 @@ Running `uiauto help exec` prints the following message.
 
       [--app=APP]
 
+      [--device=DEVICE]
+
 If you build your app outside of derived data, then you can specify the `--app` flag to tell uiauto where to find the `*.app`. You can also override the default locations for the trace file and results. For example, if your build your app in a build directory you can run the following
 
     uiauto exec uiauto/scripts/script_to_run.js --app=build/MyApp.app
+
+Pass the `--device` flag to run on the device.
+
+    # Run on a connected device
+    $ uiauto exec uiauto/scripts/script_to_run.js --device
+
+    # Run on a connected device with a specific udid
+    $ uiauto exec uiauto/scripts/script_to_run.js --device=UDID
 
 ### Simulator data
 
