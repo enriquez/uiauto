@@ -44,8 +44,24 @@ module UIAuto
     method_option :trace,   :default => File.expand_path("./uiauto/results/trace")
     method_option :app
     method_option :device
+    method_option :permission, :type => :boolean
     def exec(file_or_dir = "./uiauto/scripts/")
-      Runner.run(file_or_dir, options)
+      if options[:permission]
+        default_name = `whoami`.chop
+        name     = ask("Name (#{default_name}):")
+        password = ask("Password:", :echo => false)
+
+        if name == '' || name.nil?
+          name = default_name
+        end
+
+        Runner.run(file_or_dir, options.merge({
+          :name     => name,
+          :password => password
+        }))
+      else
+        Runner.run(file_or_dir, options)
+      end
     end
 
     desc "simulator SUBCOMMAND ...ARGS", "manage simulator data"

@@ -1,6 +1,7 @@
 require 'pty'
 require 'fileutils'
 require 'cfpropertylist'
+require 'expect'
 
 module UIAuto
   class Instruments
@@ -12,6 +13,8 @@ module UIAuto
       @results = opts[:results]
       @device  = opts[:device]
       @app     = opts[:app] || default_application
+      @name     = opts[:name]
+      @password = opts[:password]
 
       FileUtils.mkdir_p(@results) unless File.exists?(@results)
     end
@@ -31,21 +34,36 @@ module UIAuto
     def execute
       exit_status = 0
       read, write = PTY.open
-      pid = spawn(command, :in => STDIN, :out => write, :err => write)
+
+      r, w = IO.pipe  # non-interactive. asks for name/pw through gui
+      # r, w = PTY.open # interactive. asks for pw through STDIN. name can be written to w
+
+      pid = spawn(command, :in => r, :out => write, :err => write)
       write.close
+      r.close
 
       begin
         loop do
           buffer = read.readpartial(8192)
+
           lines  = buffer.split("\n")
           lines.each do |line|
             puts line
+
+            # detect Name prompt and send the name
+            # if line =~ /Name \(.+\):/
+            #   w.write @name
+            # end
+            #
+            # send PW to STDIN???
+
             exit_status = 1 if line =~ /Fail:/ && exit_status != 2
             exit_status = 2 if line =~ /Instruments Usage Error|Instruments Trace Error|^\d+-\d+-\d+ \d+:\d+:\d+ [-+]\d+ (Error:|None: Script threw an uncaught JavaScript error)/
           end
         end
       rescue EOFError
       ensure
+        w.close
         read.close
       end
 
