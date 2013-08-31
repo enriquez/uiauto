@@ -1,6 +1,7 @@
 require 'childprocess'
 require 'fileutils'
 require 'cfpropertylist'
+require 'pty'
 
 module UIAuto
   class Instruments
@@ -31,8 +32,11 @@ module UIAuto
     def execute
       exit_status = 0
       instruments = ChildProcess.build(*command.split(" "))
-      master = File.new("/dev/ptyuf", "w")
-      slave  = File.open("/dev/ttyuf", "r")
+      master, slave = if PTY.respond_to?(:open)
+                        PTY.open
+                      else
+                        [File.new("/dev/ptyuf", "w"), File.open("/dev/ttyuf", "r")]
+                      end
       instruments.io.stdout = master
       instruments.io.stderr = master
       instruments.duplex = true
