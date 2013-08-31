@@ -1,4 +1,4 @@
-require 'pty'
+require 'childprocess'
 require 'fileutils'
 require 'cfpropertylist'
 
@@ -30,13 +30,18 @@ module UIAuto
 
     def execute
       exit_status = 0
-      read, write = PTY.open
-      pid = spawn(command, :in => STDIN, :out => write, :err => write)
-      write.close
+      instruments = ChildProcess.build(*command.split(" "))
+      master = File.new("/dev/ptyuf", "w")
+      slave  = File.open("/dev/ttyuf", "r")
+      instruments.io.stdout = master
+      instruments.io.stderr = master
+      instruments.duplex = true
+      instruments.start
+      master.close
 
       begin
         loop do
-          buffer = read.readpartial(8192)
+          buffer = slave.readpartial(8192)
           lines  = buffer.split("\n")
           lines.each do |line|
             puts line
@@ -46,7 +51,7 @@ module UIAuto
         end
       rescue EOFError
       ensure
-        read.close
+        slave.close
       end
 
       exit_status

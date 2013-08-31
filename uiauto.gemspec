@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "CFPropertyList"
   spec.add_dependency "thor"
+  spec.add_dependency "childprocess"
 end
