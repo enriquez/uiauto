@@ -7,12 +7,13 @@ module UIAuto
   class Instruments
     attr_accessor :trace, :app, :results, :script, :device
 
-    def initialize(script, opts = {})
-      @script  = script
-      @trace   = opts[:trace]
-      @results = opts[:results]
-      @device  = opts[:device]
-      @app     = opts[:app] || default_application
+    def initialize(script, reporter, opts = {})
+      @reporter = reporter
+      @script   = script
+      @trace    = opts[:trace]
+      @results  = opts[:results]
+      @device   = opts[:device]
+      @app      = opts[:app] || default_application
 
       FileUtils.mkdir_p(@results) unless File.exists?(@results)
     end
@@ -30,7 +31,6 @@ module UIAuto
     end
 
     def execute
-      exit_status = 0
       instruments = ChildProcess.build(*command.split(" "))
       master, slave = if PTY.respond_to?(:open)
                         PTY.open
@@ -46,19 +46,13 @@ module UIAuto
       begin
         loop do
           buffer = slave.readpartial(8192)
-          lines  = buffer.split("\n")
-          lines.each do |line|
-            puts line
-            exit_status = 1 if line =~ /Fail:/ && exit_status != 2
-            exit_status = 2 if line =~ /Instruments Usage Error|Instruments Trace Error|^\d+-\d+-\d+ \d+:\d+:\d+ [-+]\d+ (Error:|None: Script threw an uncaught JavaScript error)/
-          end
+          @reporter.parse_instruments_output(buffer)
         end
       rescue EOFError
+        @reporter.script_finish(@script)
       ensure
         slave.close
       end
-
-      exit_status
     end
 
     protected

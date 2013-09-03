@@ -14,7 +14,7 @@ UIAuto also facilitates the setup of simulator data for running scripts in a rep
 
 ## Usage
 
-First, you need to build your app to run on the simulator. By default, `uiauto` will look for the most recently built app bundle in derived data based on your current working directory. UIAuto also provides commands and can read speical comment headers to setup simulator data. More details below.
+First, you need to build your app. By default, `uiauto` will look for the most recently built app bundle in derived data based on your current working directory. UIAuto also provides commands and can read speical comment headers to setup simulator data. More details below.
 
 ### Build your project
 
@@ -56,17 +56,26 @@ Running `uiauto help exec` prints the following message.
       uiauto exec [FILE_OR_DIRECTORY]
 
     Options:
-      [--results=RESULTS]
+      [--results=RESULTS]      # Location where results should be saved. A directory named \"Run ##\" is created in here.
+                               # Default: ./uiauto/results
+      [--trace=TRACE]          # Location of trace file. Created if it doesn't exist.
+                               # Default: ./uiauto/results/trace
+      [--app=APP]              # Location of your application bundle. Defaults to your project's most recent build located in the standard location.
+      [--device=DEVICE]        # Run scripts on a connected device. Specify a UDID to target a specific device.
+      [--format=FORMAT]        # Formatter to use for output. Combine with --require to include a custom formatter. Built-in Formatters:
+                               # ColorIndentFormatter: Adds readability to instruments output by filtering noise and adding color and indents.
+                               # InstrumentsFormatter: Unmodified instruments output.
+                               # Default: ColorIndentFormatter
+      [--listeners=LISTENERS]  # Space separated list of class names used to listen to instruments output events. Combine with --require to include custom listeners.
+      [--require=REQUIRE]      # Path to a ruby file. Used to require custom formatters or listeners.
 
-      [--trace=TRACE]
-
-      [--app=APP]
-
-      [--device=DEVICE]
+##### `--app` option
 
 If you build your app outside of derived data, then you can specify the `--app` flag to tell uiauto where to find the `*.app`. You can also override the default locations for the trace file and results. For example, if your build your app in a build directory you can run the following
 
     uiauto exec uiauto/scripts/script_to_run.js --app=build/MyApp.app
+
+##### `--device` option
 
 Pass the `--device` flag to run on the device.
 
@@ -75,6 +84,14 @@ Pass the `--device` flag to run on the device.
 
     # Run on a connected device with a specific udid
     $ uiauto exec uiauto/scripts/script_to_run.js --device=UDID
+
+##### Custom formatters and listeners
+
+UIAuto supports custom formats and custom listeners. They can be made available with the `--require` option. The difference between a formatter and listener is that a formatter is a specific kind of listener that writes to `STDOUT`. There can only be one formatter active at a time. There may be more than one listener active at a time, and a listener must not write to `STDOUT`.
+
+See [lib/uiauto/formatters/README.md](https://github.com/enriquez/uiauto/tree/master/lib/uiauto/formatters/) for details on how to implement a custom formatter.
+
+See [lib/uiauto/listeners/README.md](https://github.com/enriquez/uiauto/tree/master/lib/uiauto/listeners/) for details on how to implement a custom listener.
 
 ### Simulator data
 
