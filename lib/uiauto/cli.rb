@@ -42,7 +42,7 @@ module UIAuto
     desc "exec FILE_OR_DIRECTORY", "Runs the given script or directory of scripts through UI Automation"
     method_option :results,
       :default => File.expand_path("./uiauto/results"),
-      :desc  => %q{Location where results should be saved. A directory named \"Run ##\" is created in here.}
+      :desc  => %q{Location where results should be saved. A directory named "Run ##" is created in here.}
     method_option :trace,
       :default => File.expand_path("./uiauto/results/trace"),
       :desc  => %q{Location of trace file. Created if it doesn't exist.}

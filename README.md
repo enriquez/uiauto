@@ -56,7 +56,7 @@ Running `uiauto help exec` prints the following message.
       uiauto exec [FILE_OR_DIRECTORY]
 
     Options:
-      [--results=RESULTS]      # Location where results should be saved. A directory named \"Run ##\" is created in here.
+      [--results=RESULTS]      # Location where results should be saved. A directory named "Run ##" is created in here.
                                # Default: ./uiauto/results
       [--trace=TRACE]          # Location of trace file. Created if it doesn't exist.
                                # Default: ./uiauto/results/trace
