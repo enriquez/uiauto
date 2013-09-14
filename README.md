@@ -50,6 +50,11 @@ In the same directory as your project's .xcworkspace or .xcodeproj run the follo
 
 This will run `path_to_your_script.js` using the app bundle located in derivated data that you just built. The results and trace file are placed in `./uiauto/results` and `./uiauto/results/trace`.
 
+By placing your scripts in `./uiauto/scripts/`, then you can execute them by running the following command.
+
+    # This is the same as `uiauto exec uiauto/scripts/`
+    $ uiauto exec
+
 #### Advanced options
 
 Running `uiauto help exec` prints the following message.
