@@ -4,6 +4,8 @@ UIAuto is a command line tool for running UI Automation scripts. It improves App
 
 UIAuto also facilitates the setup of simulator data for running scripts in a repeatable and known state.
 
+![screencast](http://enriquez.me/uiauto/uiauto.gif)
+
 ## Prerequisites
 
 * Xcode command line tools
