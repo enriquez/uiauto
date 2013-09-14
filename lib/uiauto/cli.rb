@@ -28,8 +28,11 @@ module UIAuto
     end
 
     desc "open", "Opens the simulator"
+    method_option :simulator,
+      :enum => Simulator::DEVICES,
+      :desc => %q{Run the simulator for a specific device.}
     def open
-      Simulator.open
+      Simulator.open(options[:simulator])
     end
 
     desc "close", "Closes the simulator"
@@ -50,6 +53,9 @@ module UIAuto
       :desc => %q{Location of your application bundle. Defaults to your project's most recent build located in the standard derived data location.}
     method_option :device,
       :desc => %q{Run scripts on a connected device. Specify a UDID to target a specific device.}
+    method_option :simulator,
+      :enum => Simulator::DEVICES,
+      :desc => %q{Run the simulator for a specific device.}
     method_option :format,
       :default => "ColorIndentFormatter",
       :desc => %q{Formatter to use for output. Combine with --require to include a custom formatter. Built-in Formatters:

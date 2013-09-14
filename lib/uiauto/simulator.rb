@@ -3,6 +3,13 @@ require 'fileutils'
 module UIAuto
   class Simulator
     CURRENT_IOS_SDK_VERSION = "6.1"
+    DEVICES = [
+      "iPad",
+      "iPad (Retina)",
+      "iPhone",
+      "iPhone (Retina 3.5-inch)",
+      "iPhone (Retina 4-inch)"
+    ]
 
     def initialize(sdk_version = CURRENT_IOS_SDK_VERSION)
       @sdk_version = sdk_version
@@ -35,11 +42,19 @@ module UIAuto
       `killall "iPhone Simulator" &> /dev/null || true`
     end
 
-    def self.open
+    def self.open(simulator = nil)
       xcode_path     = `xcode-select -p`.strip
       simulator_path = File.join(xcode_path, "/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone Simulator.app")
 
       `open "#{simulator_path}"`
+
+      if DEVICES.include?(simulator)
+        uiauto_root = Gem::Specification.find_by_name("uiauto").gem_dir
+        choose_sim_device = File.join(uiauto_root, "helpers/choose_sim_device")
+        `#{choose_sim_device} "#{simulator}"`
+      elsif !simulator.nil?
+        puts "Invalid simulator: \"#{simulator}\""
+      end
     end
 
     private

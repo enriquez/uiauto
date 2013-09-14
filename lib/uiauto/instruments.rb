@@ -2,18 +2,20 @@ require 'childprocess'
 require 'fileutils'
 require 'cfpropertylist'
 require 'pty'
+require 'uiauto/simulator'
 
 module UIAuto
   class Instruments
-    attr_accessor :trace, :app, :results, :script, :device
+    attr_accessor :trace, :app, :results, :script, :device, :simulator
 
     def initialize(script, reporter, opts = {})
-      @reporter = reporter
-      @script   = script
-      @trace    = opts[:trace]
-      @results  = opts[:results]
-      @device   = opts[:device]
-      @app      = opts[:app] || default_application
+      @reporter  = reporter
+      @script    = script
+      @trace     = opts[:trace]
+      @results   = opts[:results]
+      @device    = opts[:device]
+      @simulator = opts[:simulator]
+      @app       = opts[:app] || default_application
 
       FileUtils.mkdir_p(@results) unless File.exists?(@results)
     end
@@ -31,6 +33,9 @@ module UIAuto
     end
 
     def execute
+      launch_simulator
+      select_device_family
+
       instruments = ChildProcess.build(*command.split(" "))
       master, slave = if PTY.respond_to?(:open)
                         PTY.open
@@ -100,6 +105,25 @@ module UIAuto
         else
           @device
         end
+      end
+    end
+
+    def launch_simulator
+      Simulator.open(@simulator)
+    end
+
+    def select_device_family
+      if @simulator && !@simulator.empty?
+        info_plist = CFPropertyList::List.new(:file => File.join(@app, "Info.plist"))
+        data       = CFPropertyList.native_types(info_plist.value)
+        if @simulator.start_with?("iPhone")
+          data["UIDeviceFamily"] = [1]
+        elsif @simulator.start_with?("iPad")
+          data["UIDeviceFamily"] = [2]
+        end
+
+        info_plist.value = CFPropertyList.guess(data)
+        info_plist.save
       end
     end
 

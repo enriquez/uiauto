@@ -62,6 +62,8 @@ Running `uiauto help exec` prints the following message.
                                # Default: ./uiauto/results/trace
       [--app=APP]              # Location of your application bundle. Defaults to your project's most recent build located in the standard location.
       [--device=DEVICE]        # Run scripts on a connected device. Specify a UDID to target a specific device.
+      [--simulator=SIMULATOR]  # Run the simulator for a specific device.
+                               # Possible values: iPad, iPad (Retina), iPhone, iPhone (Retina 3.5-inch), iPhone (Retina 4-inch)
       [--format=FORMAT]        # Formatter to use for output. Combine with --require to include a custom formatter. Built-in Formatters:
                                # ColorIndentFormatter: Adds readability to instruments output by filtering noise and adding color and indents.
                                # InstrumentsFormatter: Unmodified instruments output.
