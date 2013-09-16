@@ -29,13 +29,13 @@ module UIAuto
         when /^UIATarget .+$/
           @element_tree << line + "\n"
           notify_listeners(:element_tree_line, line)
-        when /^elements: {$/
+        when /^elements: \{$/
           @element_tree << line + "\n"
           notify_listeners(:element_tree_line, line)
         when /^\t+.+$/
           @element_tree << line + "\n"
           notify_listeners(:element_tree_line, line)
-        when /^}$/
+        when /^\}$/
           @element_tree << line
 
           notify_listeners(:element_tree, @element_tree)
