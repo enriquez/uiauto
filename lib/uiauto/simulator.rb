@@ -43,7 +43,7 @@ module UIAuto
     end
 
     def self.open(simulator = nil)
-      xcode_path     = `xcode-select -p`.strip
+      xcode_path     = `xcode-select --print-path`.strip
       simulator_path = File.join(xcode_path, "/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone Simulator.app")
 
       `open "#{simulator_path}"`
