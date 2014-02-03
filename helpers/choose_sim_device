@@ -36,20 +36,21 @@ often enough that I chose to use this menu-selection route.
 
 on run argv
   set simType to item 1 of argv
+  set sdk to item 2 of argv
 
   activate application "iPhone Simulator"
   tell application "System Events"
     tell process "iOS Simulator"
       tell menu bar 1
-        -- Hardware menu bar item
-        tell menu bar item 5
-          -- Hardware menu
-          tell menu 1
-            -- Device menu item
-            tell menu item 1
-              -- Device sub menu
-              tell menu 1
-                click menu item simType
+        tell menu bar item "Hardware"
+          tell menu "Hardware"
+            tell menu item "Device"
+              tell menu "Device"
+                tell menu item simType
+                  tell menu simType
+                    click menu item sdk
+                  end tell
+                end tell
               end tell
             end tell
           end tell

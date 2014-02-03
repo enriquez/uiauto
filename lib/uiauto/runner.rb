@@ -7,6 +7,8 @@ require 'uiauto/listeners'
 module UIAuto
   class Runner
     def self.run(file_or_dir, options = {})
+      @sdk = options[:sdk]
+
       if options[:require]
         require File.expand_path(options[:require])
       end
@@ -68,7 +70,7 @@ module UIAuto
 
           relative_path = full_path.sub(File.expand_path('.') + '/', '')
           @reporter.load_simulator_data(relative_path)
-          simulator = Simulator.new
+          simulator = Simulator.new(@sdk)
           simulator.load full_path
         end
       end

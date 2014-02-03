@@ -15,6 +15,7 @@ module UIAuto
       @results   = opts[:results]
       @device    = opts[:device]
       @simulator = opts[:simulator]
+      @sdk       = opts[:sdk]
       @app       = opts[:app] || default_application
 
       FileUtils.mkdir_p(@results) unless File.exists?(@results)
@@ -109,7 +110,7 @@ module UIAuto
     end
 
     def launch_simulator
-      Simulator.open(@simulator)
+      Simulator.open(@simulator, @sdk)
     end
 
     def select_device_family

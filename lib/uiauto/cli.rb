@@ -7,21 +7,21 @@ module UIAuto
     namespace :simulator
 
     desc "reset", "Deletes all applications and settings"
-    method_option :sdk, :default => Simulator::CURRENT_IOS_SDK_VERSION
+    method_option :sdk, :default => Simulator::DEFAULT_SDK
     def reset
       simulator = Simulator.new(options[:sdk])
       simulator.reset
     end
 
     desc "load DATA", "Loads previously saved simulator data"
-    method_option :sdk, :default => Simulator::CURRENT_IOS_SDK_VERSION
+    method_option :sdk, :default => Simulator::DEFAULT_SDK
     def load(data_path)
       simulator = Simulator.new(options[:sdk])
       simulator.load(data_path)
     end
 
     desc "save DATA", "Saves simulator data"
-    method_option :sdk, :default => Simulator::CURRENT_IOS_SDK_VERSION
+    method_option :sdk, :default => Simulator::DEFAULT_SDK
     def save(data_path)
       simulator = Simulator.new(options[:sdk])
       simulator.save(data_path)
@@ -29,15 +29,30 @@ module UIAuto
 
     desc "open", "Opens the simulator"
     method_option :simulator,
+      :default => Simulator::DEFAULT_DEVICE,
       :enum => Simulator::DEVICES,
       :desc => %q{Run the simulator for a specific device.}
+    method_option :sdk, :default => Simulator::DEFAULT_SDK
     def open
-      Simulator.open(options[:simulator])
+      Simulator.open(options[:simulator], options[:sdk])
     end
 
     desc "close", "Closes the simulator"
     def close
       Simulator.close
+    end
+
+    desc "list", "List all possible simulator and sdk combinations"
+    def list
+      table = []
+      Simulator::DEVICES.keys.each do |simulator|
+        sdks = Simulator::DEVICES[simulator]
+        sdks.each do |sdk|
+          table << [simulator, sdk]
+        end
+      end
+
+      print_table table
     end
   end
 
@@ -54,8 +69,10 @@ module UIAuto
     method_option :device,
       :desc => %q{Run scripts on a connected device. Specify a UDID to target a specific device.}
     method_option :simulator,
+      :default => Simulator::DEFAULT_DEVICE,
       :enum => Simulator::DEVICES,
       :desc => %q{Run the simulator for a specific device.}
+    method_option :sdk, :default => Simulator::DEFAULT_SDK
     method_option :format,
       :default => "ColorIndentFormatter",
       :desc => %q{Formatter to use for output. Combine with --require to include a custom formatter. Built-in Formatters:
