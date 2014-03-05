@@ -34,8 +34,8 @@ module UIAuto
     end
 
     def execute
-      launch_simulator
-      select_device_family
+      launch_simulator unless device_id
+      select_device_family unless device_id
 
       instruments = ChildProcess.build(*command.split(" "))
       master, slave = if PTY.respond_to?(:open)
