@@ -1,5 +1,6 @@
 require 'uiauto/formatters/base_formatter'
 require 'rainbow'
+require 'rainbow/ext/string'
 
 module UIAuto
   module Formatters
